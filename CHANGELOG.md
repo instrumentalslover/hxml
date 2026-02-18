@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Testing: increased CLI watch-mode integration test timeout to reduce transient CI/local timeouts on slower environments
+- Docs: restored concise "Fast Usage" section in README for lower-friction local/global CLI onboarding
 - Docs: substantially reduced `docs/guide.md` to a concise practical guide
 - Docs: replaced long-form `docs/design.md` with short maintainer design notes
 - Packaging: switched npm package name to scoped `@instrumentalslover/hxml` (unscoped `hxml` unavailable)

@@ -23,6 +23,18 @@ Requires Node.js 20+.
 
 Unscoped npm name `hxml` is already taken by an unrelated package.
 
+## Fast Usage
+
+```sh
+# local project install
+npm i -D @instrumentalslover/hxml
+npx hxml build page.hxml -o page.html
+
+# or global install
+npm i -g @instrumentalslover/hxml
+hxml build page.hxml -o page.html
+```
+
 ## Quick Example
 
 ```hxml

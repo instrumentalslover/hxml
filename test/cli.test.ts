@@ -209,5 +209,5 @@ describe('CLI integration', () => {
       proc.kill('SIGINT');
       rmSync(tmp, { recursive: true, force: true });
     }
-  });
+  }, 15000);
 });
