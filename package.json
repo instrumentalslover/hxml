@@ -1,0 +1,92 @@
+{
+  "name": "@instrumentalslover/hxml",
+  "version": "0.2.0",
+  "description": "HTML + XML superset. Unprefixed elements follow HTML rules, namespaced elements follow XML rules. Freely mixed in the same document.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./vite": {
+      "types": "./dist/vite-plugin.d.ts",
+      "import": "./dist/vite-plugin.js"
+    }
+  },
+  "bin": {
+    "hxml": "bin/hxml.js"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "docs/assets/HXML.png",
+    "docs/README.md",
+    "docs/spec/grammar.md",
+    "docs/spec/decisions.md",
+    "docs/legal/commercial-license.md",
+    "docs/legal/cla-individual.md",
+    "docs/legal/cla-corporate.md",
+    "docs/legal/trademarks.md",
+    "hxml.tmLanguage.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc",
+    "check": "npm run build && npm test",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dev": "tsc --watch",
+    "bench": "npm run build && node bench/benchmark.mjs",
+    "docs:api": "typedoc"
+  },
+  "keywords": [
+    "html",
+    "xml",
+    "hxml",
+    "parser",
+    "compiler",
+    "markup",
+    "namespace",
+    "superset",
+    "custom-elements"
+  ],
+  "author": "WL (@instrumentalslover)",
+  "license": "AGPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/instrumentalslover/hxml.git"
+  },
+  "homepage": "https://github.com/instrumentalslover/hxml",
+  "bugs": {
+    "url": "https://github.com/instrumentalslover/hxml/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "vite": ">=4"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.3",
+    "esbuild": "^0.27.3",
+    "typedoc": "^0.28.14",
+    "typedoc-plugin-markdown": "^4.9.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  },
+  "dependencies": {
+    "entities": "^4.5.0",
+    "fast-glob": "^3.3.2"
+  }
+}

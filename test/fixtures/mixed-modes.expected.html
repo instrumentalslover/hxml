@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><title>Mixed Mode Test</title></head><body><h1>Welcome to HXML</h1><!-- HTML paragraphs with optional close tags --><p>This is a normal HTML paragraph
+  </p><p>So is this one
+
+  <!-- XML namespace block --><data-records data-xmlns-data="urn:myapp:data">
+    <data-record id="1">
+      <data-name>Alice</data-name>
+      <data-role>Engineer</data-role>
+    </data-record>
+    <data-record id="2">
+      <data-name>Bob</data-name>
+      <data-role>Designer</data-role>
+    </data-record>
+  </data-records><!-- HTML list --></p><ul><li>Item one
+    </li><li>Item two
+  </li></ul><!-- XML element inline in HTML --><p>User status: <ui-badge data-xmlns-ui="urn:ui" type="success">Active</ui-badge></p><!-- Namespace inherited from ancestor --><div><app-widget type="chart">
+      <app-title>Sales Data</app-title>
+      <p>Some HTML inside XML
+    </p></app-widget></div><!-- CDATA inside XML --><code-block data-xmlns-code="urn:code">
+    &lt;this&gt; is literal &amp; text "unescaped"
+  </code-block><!-- Processing instruction --><!--?myapp render-mode="fancy"?--><!-- Self-closing XML element --><data-separator data-xmlns-data="urn:myapp:data"></data-separator></body></html>

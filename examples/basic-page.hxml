@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+  <h1>HXML Example</h1>
+  <p>This is plain HTML mode.
+
+  <data:user xmlns:data="urn:example:user" id="1">
+    <data:name>Alice</data:name>
+    <data:role>Engineer</data:role>
+  </data:user>
+</body>
+</html>

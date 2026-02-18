@@ -1,0 +1,53 @@
+name: Bug Report
+description: Report a bug in parser, validator, emitter, CLI, or docs
+labels: [bug]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened, and what did you expect?
+      placeholder: Clear, concise bug summary.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: Minimal HXML input and exact command/API call.
+      placeholder: |
+        HXML:
+        <data:record>...
+
+        Command:
+        hxml build input.hxml -o out.html
+    validations:
+      required: true
+
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: Runtime details
+      placeholder: |
+        OS:
+        Node:
+        hxml version:
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics / Logs
+      description: Paste relevant error output or stack traces.
+      render: shell
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues
+          required: true
+        - label: I can reproduce this with a minimal input
+          required: true

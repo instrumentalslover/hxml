@@ -1,0 +1,190 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "HXML",
+  "scopeName": "text.hxml",
+  "fileTypes": ["hxml"],
+  "patterns": [
+    { "include": "#doctype" },
+    { "include": "#xml-declaration" },
+    { "include": "#comment" },
+    { "include": "#cdata" },
+    { "include": "#processing-instruction" },
+    { "include": "#xml-close-tag" },
+    { "include": "#xml-open-tag" },
+    { "include": "#html-close-tag" },
+    { "include": "#html-open-tag" },
+    { "include": "#char-ref" }
+  ],
+  "repository": {
+    "doctype": {
+      "name": "meta.tag.sgml.doctype.html",
+      "match": "(?i)<!DOCTYPE\\s+[^>]*>",
+      "captures": {
+        "0": { "name": "entity.name.tag.doctype" }
+      }
+    },
+    "xml-declaration": {
+      "name": "meta.tag.preprocessor.xml",
+      "match": "<\\?xml[^?]*\\?>",
+      "captures": {
+        "0": { "name": "entity.name.tag.xml.declaration" }
+      }
+    },
+    "comment": {
+      "name": "comment.block.html",
+      "begin": "<!--",
+      "end": "-->",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.comment.html" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.comment.html" }
+      }
+    },
+    "cdata": {
+      "name": "string.unquoted.cdata.xml",
+      "begin": "<!\\[CDATA\\[",
+      "end": "\\]\\]>",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.string.begin.xml" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.string.end.xml" }
+      }
+    },
+    "processing-instruction": {
+      "name": "meta.tag.preprocessor.xml",
+      "begin": "<\\?(?!xml\\s)",
+      "end": "\\?>",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.tag.begin.xml" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.tag.end.xml" }
+      },
+      "patterns": [
+        {
+          "match": "[a-zA-Z_][a-zA-Z0-9._-]*",
+          "name": "entity.name.tag.target.xml"
+        },
+        { "include": "#attribute" }
+      ]
+    },
+    "xml-open-tag": {
+      "comment": "XML-mode element: prefix:localName (has a colon in the tag name)",
+      "name": "meta.tag.xml.open.hxml",
+      "begin": "(<)([a-zA-Z_][a-zA-Z0-9._-]*:[a-zA-Z_][a-zA-Z0-9._-]*)",
+      "end": "(/?>)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.xml" },
+        "2": { "name": "entity.name.tag.xml.hxml" }
+      },
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.xml" }
+      },
+      "patterns": [
+        { "include": "#xmlns-attribute" },
+        { "include": "#attribute" }
+      ]
+    },
+    "xml-close-tag": {
+      "comment": "Closing tag for XML-mode element",
+      "name": "meta.tag.xml.close.hxml",
+      "match": "(</)([a-zA-Z_][a-zA-Z0-9._-]*:[a-zA-Z_][a-zA-Z0-9._-]*)(>)",
+      "captures": {
+        "1": { "name": "punctuation.definition.tag.begin.xml" },
+        "2": { "name": "entity.name.tag.xml.hxml" },
+        "3": { "name": "punctuation.definition.tag.end.xml" }
+      }
+    },
+    "html-open-tag": {
+      "comment": "HTML-mode element: unprefixed tag name",
+      "name": "meta.tag.html.open.hxml",
+      "begin": "(<)([a-zA-Z][a-zA-Z0-9-]*)",
+      "end": "(/?>)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.html" },
+        "2": { "name": "entity.name.tag.html.hxml" }
+      },
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.end.html" }
+      },
+      "patterns": [
+        { "include": "#attribute" }
+      ]
+    },
+    "html-close-tag": {
+      "comment": "Closing tag for HTML-mode element",
+      "name": "meta.tag.html.close.hxml",
+      "match": "(</)([a-zA-Z][a-zA-Z0-9-]*)(>)",
+      "captures": {
+        "1": { "name": "punctuation.definition.tag.begin.html" },
+        "2": { "name": "entity.name.tag.html.hxml" },
+        "3": { "name": "punctuation.definition.tag.end.html" }
+      }
+    },
+    "xmlns-attribute": {
+      "comment": "Namespace declaration: xmlns:prefix or xmlns",
+      "name": "meta.attribute.namespace.xml",
+      "match": "(?x)\n  (xmlns(?::[a-zA-Z_][a-zA-Z0-9._-]*)?)  # attribute name\n  (\\s*=\\s*)                                 # equals\n  ((?:\"[^\"]*\"|'[^']*'))                     # quoted value",
+      "captures": {
+        "1": { "name": "entity.other.attribute-name.namespace.xml" },
+        "2": { "name": "punctuation.separator.key-value.html" },
+        "3": { "name": "string.quoted.double.html" }
+      }
+    },
+    "attribute": {
+      "name": "meta.attribute.hxml",
+      "patterns": [
+        {
+          "comment": "Attribute with double-quoted value",
+          "match": "([a-zA-Z_:][a-zA-Z0-9._:-]*)(\\s*=\\s*)(\"[^\"]*\")",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.html" },
+            "2": { "name": "punctuation.separator.key-value.html" },
+            "3": { "name": "string.quoted.double.html" }
+          }
+        },
+        {
+          "comment": "Attribute with single-quoted value",
+          "match": "([a-zA-Z_:][a-zA-Z0-9._:-]*)(\\s*=\\s*)('[^']*')",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.html" },
+            "2": { "name": "punctuation.separator.key-value.html" },
+            "3": { "name": "string.quoted.single.html" }
+          }
+        },
+        {
+          "comment": "Attribute with unquoted value",
+          "match": "([a-zA-Z_:][a-zA-Z0-9._:-]*)(\\s*=\\s*)([^\\s\"'>]+)",
+          "captures": {
+            "1": { "name": "entity.other.attribute-name.html" },
+            "2": { "name": "punctuation.separator.key-value.html" },
+            "3": { "name": "string.unquoted.html" }
+          }
+        },
+        {
+          "comment": "Boolean attribute (no value)",
+          "match": "[a-zA-Z_:][a-zA-Z0-9._:-]*",
+          "name": "entity.other.attribute-name.html"
+        }
+      ]
+    },
+    "char-ref": {
+      "patterns": [
+        {
+          "match": "&#[0-9]+;",
+          "name": "constant.character.entity.decimal.html"
+        },
+        {
+          "match": "&#x[0-9a-fA-F]+;",
+          "name": "constant.character.entity.hex.html"
+        },
+        {
+          "match": "&[a-zA-Z][a-zA-Z0-9]*;",
+          "name": "constant.character.entity.named.html"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+  <article>
+    <h2>Status</h2>
+    <p>Deployment state:
+      <ops:badge xmlns:ops="urn:ops" level="ok">Healthy</ops:badge>
+    </p>
+
+    <section xmlns:cfg="urn:cfg">
+      <h3>Config</h3>
+      <cfg:item key="region" value="us-east-1"/>
+      <cfg:item key="tier" value="prod"/>
+    </section>
+  </article>
+</body>
+</html>

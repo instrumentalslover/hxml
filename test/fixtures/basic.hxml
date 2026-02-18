@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Basic HXML Test</title>
+</head>
+<body>
+
+  <h1>Hello World</h1>
+
+  <!-- HTML void elements -->
+  <br>
+  <hr>
+  <img src="photo.jpg" alt="A photo">
+  <input type="text" disabled>
+
+  <!-- Optional closing tags -->
+  <p>First paragraph
+  <p>Second paragraph
+
+  <ul>
+    <li>Item one
+    <li>Item two
+    <li>Item three
+  </ul>
+
+  <table>
+    <tr>
+      <td>Cell 1
+      <td>Cell 2
+    <tr>
+      <td>Cell 3
+      <td>Cell 4
+  </table>
+
+</body>
+</html>

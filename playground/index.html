@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HXML Playground</title>
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────── */
+
+header {
+    padding: 10px 20px;
+    background: #1a1d2e;
+    border-bottom: 1px solid #2d3154;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+header h1 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #a78bfa;
+    letter-spacing: -0.01em;
+}
+
+.badge {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.badge.html  { background: #1e3a5f; color: #60a5fa; }
+.badge.xml   { background: #3b1f5e; color: #c084fc; }
+.badge.both  { background: #1f3b2e; color: #4ade80; }
+
+/* ── Layout ──────────────────────────────────────────────────────────── */
+
+main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    border-right: 1px solid #1e2235;
+    min-width: 0;
+}
+
+.panel-header {
+    padding: 7px 12px;
+    background: #151828;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #64748b;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #1e2235;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.mode-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.mode-dot.html { background: #60a5fa; }
+.mode-dot.xml  { background: #c084fc; }
+
+/* ── Textareas & panels ──────────────────────────────────────────────── */
+
+textarea {
+    flex: 1;
+    background: #0d1018;
+    color: #c9d1d9;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.78rem;
+    padding: 14px;
+    border: none;
+    resize: none;
+    outline: none;
+    line-height: 1.7;
+    tab-size: 2;
+    white-space: pre;
+}
+
+.right-col {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.right-col .panel { border-right: none; border-bottom: 1px solid #1e2235; }
+.right-col .panel:last-child { border-bottom: none; }
+
+#ast-panel {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 12px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.73rem;
+    line-height: 1.8;
+}
+
+#convert-out {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    color: #c9d1d9;
+    background: #0d1018;
+    white-space: pre;
+    display: none;
+}
+
+#output-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+iframe#preview {
+    flex: 1;
+    border: none;
+    background: #fff;
+}
+
+pre#html-src,
+pre#map-src {
+    flex: 1;
+    overflow: auto;
+    padding: 12px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.73rem;
+    line-height: 1.6;
+    color: #c9d1d9;
+    background: #0d1018;
+    white-space: pre;
+    display: none;
+    margin: 0;
+}
+
+/* ── Error bar ───────────────────────────────────────────────────────── */
+
+#error-bar {
+    background: #140a0a;
+    border-top: 1px solid #3b1515;
+    flex-shrink: 0;
+    max-height: 110px;
+    overflow-y: auto;
+    display: none;
+}
+
+.diag-item {
+    padding: 5px 14px;
+    border-bottom: 1px solid #2a0f0f;
+    font-size: 0.72rem;
+    font-family: 'Fira Code', monospace;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.diag-item:last-child { border-bottom: none; }
+
+.diag-sev-error   { color: #f87171; }
+.diag-sev-warning { color: #fbbf24; }
+.diag-code  { color: #475569; min-width: 72px; }
+.diag-loc   { color: #64748b; min-width: 80px; }
+.diag-msg   { color: #e2e8f0; flex: 1; }
+.diag-hint  { color: #4ade80; font-style: italic; margin-left: 4px; }
+
+/* ── AST nodes ───────────────────────────────────────────────────────── */
+
+.node         { margin-left: 14px; }
+.tag-html     { color: #60a5fa; }
+.tag-xml      { color: #c084fc; }
+.tag-close    { color: #475569; }
+.attr-n       { color: #34d399; }
+.attr-v       { color: #fbbf24; }
+.text-node    { color: #94a3b8; font-style: italic; }
+.comment-node { color: #4b5563; }
+.pi-node      { color: #f97316; }
+.cdata-node   { color: #fbbf24; }
+
+/* ── Controls ────────────────────────────────────────────────────────── */
+
+select.ctrl {
+    background: #0f1117;
+    color: #a78bfa;
+    border: 1px solid #2d3154;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    cursor: pointer;
+    outline: none;
+}
+
+select.ctrl option { background: #0f1117; }
+
+.tab-btn {
+    background: transparent;
+    color: #64748b;
+    border: 1px solid #1e2235;
+    border-radius: 4px;
+    font-size: 0.68rem;
+    padding: 2px 7px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.tab-btn:hover        { color: #a78bfa; border-color: #2d3154; }
+.tab-btn.active       { color: #a78bfa; border-color: #a78bfa; }
+
+.spacer { flex: 1; }
+
+#mode-desc {
+    font-size: 0.63rem;
+    color: #475569;
+    padding: 0 4px;
+    max-width: 200px;
+    line-height: 1.4;
+    white-space: normal;
+}
+
+#no-xml-notice {
+    display: none;
+    font-size: 0.63rem;
+    color: #78350f;
+    background: #1c1208;
+    border: 1px solid #451a03;
+    border-radius: 3px;
+    padding: 1px 6px;
+    white-space: nowrap;
+}
+
+#passthrough-note {
+    display: none;
+    padding: 6px 14px;
+    font-size: 0.72rem;
+    color: #64748b;
+    background: #0f1117;
+    border-top: 1px solid #1e2235;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>&#x2B21; HXML</h1>
+    <span style="font-size: 0.8rem; color: #64748b">HTML + XML Superset</span>
+    <span class="badge html">HTML lenient</span>
+    <span class="badge xml">XML strict</span>
+    <span class="badge both">Mixed freely</span>
+    <span id="status" style="margin-left: auto; font-size: 0.7rem; color: #4ade80"></span>
+</header>
+
+<main>
+    <!-- ── Panel 1: Source ────────────────────────────────────────── -->
+    <div class="panel">
+        <div class="panel-header">
+            <span class="mode-dot html"></span> HXML Source
+            <span class="spacer"></span>
+            <button class="tab-btn active" id="btn-src-hxml" onclick="switchSrcTab('hxml')">HXML</button>
+            <button class="tab-btn" id="btn-src-conv" onclick="switchSrcTab('conv')" title="Paste HTML to convert it to HXML">HTML&#x2192;HXML</button>
+        </div>
+        <textarea id="src" spellcheck="false"><?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<!-- HXML: HTML elements use lenient HTML rules -->
+<!-- XML namespaced elements use strict XML rules -->
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My HXML Page</title>
+</head>
+<body>
+
+  <h1>Welcome to HXML</h1>
+
+  <!-- HTML: p doesn't need closing tags -->
+  <p>This is a normal HTML paragraph
+  <p>So is this one — no closing tags needed
+
+  <!-- XML namespace block: strict rules apply -->
+  <data:records xmlns:data="urn:myapp:data">
+    <data:record id="1">
+      <data:name>Alice</data:name>
+      <data:role>Engineer</data:role>
+    </data:record>
+    <data:record id="2">
+      <data:name>Bob</data:name>
+      <data:role>Designer</data:role>
+    </data:record>
+  </data:records>
+
+  <!-- HTML list — li doesn't need closing tags -->
+  <ul>
+    <li>Item one
+    <li>Item two
+    <li>Item three
+  </ul>
+
+  <!-- SVG as foreign content -->
+  <svg:svg xmlns:svg="http://www.w3.org/2000/svg" width="120" height="40">
+    <svg:rect width="120" height="40" fill="#4f46e5" rx="6"/>
+    <svg:text x="10" y="26" fill="white" font-size="14">HXML!</svg:text>
+  </svg:svg>
+
+  <!-- Processing instruction -->
+  <?myapp render-mode="fancy"?>
+
+  <!-- XML mixed inline with HTML -->
+  <p>User status: <ui:badge xmlns:ui="urn:ui" type="success">Active</ui:badge></p>
+
+  <!-- CDATA in XML element -->
+  <code:block xmlns:code="urn:code">
+    <![CDATA[<this> is literal & text "unescaped"]]>
+  </code:block>
+
+  <br>
+  <hr>
+  <img src="photo.jpg" alt="A photo">
+
+</body>
+</html></textarea>
+        <textarea id="html-in" style="display:none" spellcheck="false" placeholder="Paste HTML here — it will be converted to HXML and emitted"></textarea>
+    </div>
+
+    <!-- ── Panel 2: AST / Converter output ───────────────────────── -->
+    <div class="panel">
+        <div class="panel-header">
+            <span class="mode-dot xml"></span>
+            <span id="ast-label">AST</span>
+            <span id="ast-stats" style="margin-left: auto; color: #475569; font-size: 0.68rem; font-weight: 400; letter-spacing: 0"></span>
+        </div>
+        <div id="ast-panel"></div>
+        <div id="convert-out"></div>
+    </div>
+
+    <!-- ── Panel 3: Output ───────────────────────────────────────── -->
+    <div class="right-col panel" style="border-right: none">
+        <div class="panel-header">
+            <span class="mode-dot html"></span> Output
+            <select class="ctrl" id="emit-mode">
+                <option value="custom-elements">custom-elements</option>
+                <option value="data-attributes">data-attributes</option>
+                <option value="passthrough">passthrough</option>
+                <option value="strip">strip</option>
+            </select>
+            <span id="mode-desc"></span>
+            <span id="no-xml-notice" title="Switch to the HTML tab to see the source — emit modes only differ for XML namespace elements">No XML elements — all modes identical</span>
+            <label style="font-size: 0.7rem; color: #64748b; display: flex; align-items: center; gap: 4px; cursor: pointer">
+                <input type="checkbox" id="indent-check"> indent
+            </label>
+            <span class="spacer"></span>
+            <button class="tab-btn active" id="btn-preview" onclick="showOutputTab('preview')">Preview</button>
+            <button class="tab-btn" id="btn-html" onclick="showOutputTab('html')">HTML</button>
+            <button class="tab-btn" id="btn-map" onclick="showOutputTab('map')">Map</button>
+        </div>
+        <div id="output-area">
+            <iframe id="preview" sandbox="allow-same-origin"></iframe>
+            <pre id="html-src"></pre>
+            <pre id="map-src"></pre>
+        </div>
+        <div id="passthrough-note">
+            &#x24D8; Passthrough mode emits XML tags as-is. Browsers won't render namespaced
+            elements — use this mode for further processing pipelines, not for preview.
+        </div>
+    </div>
+</main>
+<div id="error-bar"></div>
+
+<script type="module">
+import { parse, emit, validate, htmlToHxml } from './hxml-browser.js';
+
+// ── Mode descriptions ─────────────────────────────────────────────────────
+const MODE_DESCRIPTIONS = {
+    'custom-elements': 'XML tags \u2192 custom elements (data:foo \u2192 data-foo)',
+    'data-attributes': 'XML tags \u2192 div with data-hxml-tag attribute',
+    'passthrough':     'XML tags emitted as-is (for further processing)',
+    'strip':           'XML tags removed, only their text content kept',
+};
+
+function updateModeDesc(mode) {
+    document.getElementById('mode-desc').textContent = MODE_DESCRIPTIONS[mode] ?? '';
+}
+
+// ── XML element detection (for "all modes identical" notice) ─────────────
+function hasXmlElements(nodes) {
+    for (const n of nodes) {
+        if (n.type === 'element' && n.mode === 'xml') return true;
+        if (n.children && hasXmlElements(n.children)) return true;
+    }
+    return false;
+}
+
+// ── Source tab ────────────────────────────────────────────────────────────
+let srcTab = 'hxml';
+
+window.switchSrcTab = function(tab) {
+    srcTab = tab;
+    document.getElementById('btn-src-hxml').classList.toggle('active', tab === 'hxml');
+    document.getElementById('btn-src-conv').classList.toggle('active', tab === 'conv');
+    document.getElementById('src').style.display       = tab === 'hxml' ? 'flex' : 'none';
+    document.getElementById('html-in').style.display   = tab === 'conv' ? 'flex' : 'none';
+    document.getElementById('ast-panel').style.display = tab === 'hxml' ? 'block' : 'none';
+    document.getElementById('convert-out').style.display = tab === 'conv' ? 'block' : 'none';
+    document.getElementById('ast-label').textContent   = tab === 'hxml' ? 'AST' : 'HXML Output';
+    document.getElementById('ast-stats').textContent   = '';
+    // Hide no-xml notice in converter mode (expected to have no XML elements)
+    if (tab === 'conv') document.getElementById('no-xml-notice').style.display = 'none';
+    if (tab === 'conv') runConverter(); else run();
+};
+
+// ── Output tab ────────────────────────────────────────────────────────────
+window.showOutputTab = function(tab) {
+    document.getElementById('preview').style.display  = 'none';
+    document.getElementById('html-src').style.display = 'none';
+    document.getElementById('map-src').style.display  = 'none';
+    ['preview', 'html', 'map'].forEach(t => document.getElementById('btn-' + t).classList.remove('active'));
+    if (tab === 'preview') document.getElementById('preview').style.display = 'flex';
+    else document.getElementById(tab + '-src').style.display = 'block';
+    document.getElementById('btn-' + tab).classList.add('active');
+};
+
+// ── HTML → HXML converter ─────────────────────────────────────────────────
+function runConverter() {
+    const source = document.getElementById('html-in').value;
+    if (!source.trim()) {
+        document.getElementById('convert-out').textContent = '\u2190 Paste HTML in the editor';
+        updateOutput('', null);
+        return;
+    }
+    try {
+        const { hxml } = htmlToHxml(source, { indent: '  ' });
+        document.getElementById('convert-out').textContent = hxml;
+
+        // Emit the converted HXML so the output panel stays in sync with the mode selector
+        const mode      = document.getElementById('emit-mode').value;
+        const wantIndent = document.getElementById('indent-check').checked;
+        const pr = parse(hxml);
+        const er = emit(pr.ast, {
+            mode,
+            indent: wantIndent ? '  ' : '',
+            sourceMap: true,
+            sourceFile: 'converted.hxml',
+        });
+        updateOutput(er.html, er.sourceMap);
+        updateErrors(pr.diagnostics);
+        updateStatus(pr.diagnostics);
+        updateModeDesc(mode);
+        document.getElementById('passthrough-note').style.display = mode === 'passthrough' ? 'block' : 'none';
+        document.getElementById('ast-stats').textContent = hxml.split('\n').length + ' lines';
+    } catch (e) {
+        document.getElementById('convert-out').textContent = 'Error: ' + String(e);
+    }
+}
+
+// ── Main parse/emit ───────────────────────────────────────────────────────
+function run() {
+    const source     = document.getElementById('src').value;
+    const mode       = document.getElementById('emit-mode').value;
+    const wantIndent = document.getElementById('indent-check').checked;
+
+    const parseResult = parse(source);
+    const valDiags    = validate(parseResult.ast);
+    const allDiags    = [...parseResult.diagnostics, ...valDiags];
+
+    const emitResult = emit(parseResult.ast, {
+        mode,
+        indent: wantIndent ? '  ' : '',
+        sourceMap: true,
+        sourceFile: 'input.hxml',
+    });
+
+    updateAST(parseResult.ast.children);
+    updateOutput(emitResult.html, emitResult.sourceMap);
+    updateErrors(allDiags);
+    updateStatus(allDiags);
+    updateModeDesc(mode);
+    document.getElementById('passthrough-note').style.display = mode === 'passthrough' ? 'block' : 'none';
+    document.getElementById('no-xml-notice').style.display =
+        hasXmlElements(parseResult.ast.children) ? 'none' : 'inline';
+}
+
+// ── AST renderer ──────────────────────────────────────────────────────────
+function esc(s) {
+    return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function renderAST(nodes) {
+    let out = '';
+    for (const n of nodes) {
+        if (n.type === 'text') {
+            const v = n.value.trim();
+            if (!v) continue;
+            out += `<div class="node text-node">"${esc(v)}"</div>`;
+        } else if (n.type === 'comment') {
+            out += `<div class="node comment-node">&lt;!-- ${esc(n.value.trim())} --&gt;</div>`;
+        } else if (n.type === 'cdata') {
+            out += `<div class="node cdata-node">&lt;![CDATA[${esc(n.value.trim())}]]&gt;</div>`;
+        } else if (n.type === 'processingInstruction') {
+            out += `<div class="node pi-node">&lt;?${esc(n.target)}${n.data ? ' ' + esc(n.data) : ''}?&gt;</div>`;
+        } else if (n.type === 'doctype') {
+            out += `<div class="node comment-node">&lt;!DOCTYPE ${esc(n.value)}&gt;</div>`;
+        } else if (n.type === 'element') {
+            const isXml = n.mode === 'xml';
+            const cls   = isXml ? 'tag-xml' : 'tag-html';
+            const dot   = `<span class="mode-dot ${isXml ? 'xml' : 'html'}" title="${isXml ? 'XML' : 'HTML'} mode"></span>`;
+            let attrStr = '';
+            for (const a of n.attrs) {
+                attrStr += ` <span class="attr-n">${esc(a.name)}</span>`;
+                if (a.value !== null) attrStr += `=<span class="attr-v">"${esc(a.value)}"</span>`;
+            }
+            out += `<div class="node"><span class="${cls}">&lt;${esc(n.name)}${attrStr}${n.isVoid ? '/' : ''}&gt;</span> ${dot}`;
+            if (n.children?.length) {
+                out += renderAST(n.children);
+                if (!n.isVoid) out += `<div class="node tag-close">&lt;/${esc(n.name)}&gt;</div>`;
+            } else if (!n.isVoid) {
+                out += `<span class="tag-close"> &lt;/${esc(n.name)}&gt;</span>`;
+            }
+            out += '</div>';
+        }
+    }
+    return out;
+}
+
+function countNodes(nodes) {
+    let c = 0;
+    for (const n of nodes) { c++; if (n.children) c += countNodes(n.children); }
+    return c;
+}
+
+function updateAST(nodes) {
+    document.getElementById('ast-panel').innerHTML = renderAST(nodes);
+    const total = countNodes(nodes);
+    document.getElementById('ast-stats').textContent = `${total} node${total !== 1 ? 's' : ''}`;
+}
+
+function updateOutput(html, sourceMap) {
+    document.getElementById('preview').srcdoc       = html;
+    document.getElementById('html-src').textContent = html;
+    if (sourceMap) {
+        try { document.getElementById('map-src').textContent = JSON.stringify(JSON.parse(sourceMap), null, 2); }
+        catch { document.getElementById('map-src').textContent = sourceMap; }
+    } else {
+        document.getElementById('map-src').textContent = '(no source map)';
+    }
+}
+
+function updateErrors(diags) {
+    const bar = document.getElementById('error-bar');
+    if (!diags.length) { bar.style.display = 'none'; bar.innerHTML = ''; return; }
+    bar.style.display = 'block';
+    bar.innerHTML = diags.map(d => {
+        const sevCls = d.severity === 'error' ? 'diag-sev-error' : 'diag-sev-warning';
+        const loc    = d.loc ? `${d.loc.start.line}:${d.loc.start.col}` : '';
+        const hint   = d.hint ? `<span class="diag-hint">&#x2192; ${esc(d.hint)}</span>` : '';
+        return `<div class="diag-item">
+            <span class="${sevCls}">${d.severity === 'error' ? '&#x2715;' : '&#x26A0;'}</span>
+            <span class="diag-code">${esc(d.code)}</span>
+            <span class="diag-loc">${esc(loc)}</span>
+            <span class="diag-msg">${esc(d.message)}${hint}</span>
+        </div>`;
+    }).join('');
+}
+
+function updateStatus(diags) {
+    const errors   = diags.filter(d => d.severity === 'error').length;
+    const warnings = diags.filter(d => d.severity === 'warning').length;
+    const el = document.getElementById('status');
+    if (!diags.length) { el.style.color = '#4ade80'; el.textContent = 'No issues'; return; }
+    const parts = [];
+    if (errors)   parts.push(`${errors} error${errors !== 1 ? 's' : ''}`);
+    if (warnings) parts.push(`${warnings} warning${warnings !== 1 ? 's' : ''}`);
+    el.style.color = errors ? '#f87171' : '#fbbf24';
+    el.textContent = parts.join(', ');
+}
+
+// ── Events ────────────────────────────────────────────────────────────────
+document.getElementById('src').addEventListener('input', run);
+document.getElementById('html-in').addEventListener('input', runConverter);
+document.getElementById('emit-mode').addEventListener('change', () => srcTab === 'conv' ? runConverter() : run());
+document.getElementById('indent-check').addEventListener('change', () => srcTab === 'conv' ? runConverter() : run());
+
+run();
+</script>
+</body>
+</html>

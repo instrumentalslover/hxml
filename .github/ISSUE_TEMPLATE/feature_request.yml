@@ -1,0 +1,43 @@
+name: Feature Request
+description: Propose a new capability or workflow improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What workflow is currently hard or missing?
+      placeholder: Describe the real-world pain point.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should be added or changed?
+      placeholder: Describe expected API/CLI behavior.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any other approaches you've tried.
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples
+      description: Sample HXML, output, or pseudocode.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues
+          required: true
+        - label: This request is specific and actionable
+          required: true

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+  <!-- ERROR: Undeclared namespace prefix -->
+  <data:record id="1">
+    <data:name>Alice</data:name>
+  </data:record>
+
+  <!-- ERROR: Unclosed XML element -->
+  <ui:panel xmlns:ui="urn:ui">
+    <ui:header>Panel Title</ui:header>
+    <ui:body>
+      <p>Content here
+
+  <!-- ERROR: Unmatched close tag -->
+  </nonexistent>
+
+  <!-- ERROR: Duplicate attributes on XML element -->
+  <cfg:setting xmlns:cfg="urn:cfg" key="theme" key="dark">value</cfg:setting>
+
+</body>
+</html>

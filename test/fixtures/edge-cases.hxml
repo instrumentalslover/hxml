@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+  <!-- Raw text elements -->
+  <script>
+    var x = a < b && c > d;
+    if (x < 10) { console.log("<not a tag>"); }
+  </script>
+
+  <style>
+    .foo > .bar { color: red; }
+    p { margin: 0 }
+  </style>
+
+  <textarea>
+    <p>This is not a paragraph tag</p>
+    It's just text inside a textarea.
+  </textarea>
+
+  <title>Title with <angle> brackets</title>
+
+  <!-- CDATA in HTML context (should warn) -->
+  <![CDATA[This CDATA is in HTML mode]]>
+
+  <!-- Deeply nested mode switches -->
+  <div xmlns:a="urn:a">
+    <a:outer>
+      <p>HTML inside XML
+      <a:inner>
+        <span>HTML inside XML inside HTML inside XML</span>
+      </a:inner>
+      <p>More HTML
+    </a:outer>
+  </div>
+
+  <!-- Self-closing on non-void HTML element (gets ignored per spec) -->
+  <div/>
+  <p>This should not be eaten by the div above</p>
+
+  <!-- Boolean attributes -->
+  <input type="checkbox" checked disabled>
+
+  <!-- Unquoted attribute values -->
+  <div class=main id=content>Main content</div>
+
+  <!-- Empty document fragments -->
+  <div></div>
+  <a:empty xmlns:a="urn:a"/>
+
+</body>
+</html>

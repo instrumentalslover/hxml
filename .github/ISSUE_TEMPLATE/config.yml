@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Usage Questions
+    url: https://github.com/instrumentalslover/hxml/blob/main/docs/guide.md
+    about: Read the guide first for setup, CLI usage, and API patterns.
