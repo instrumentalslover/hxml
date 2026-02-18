@@ -11,7 +11,7 @@
 
 # hxml
 
-HTML + XML superset markup: unprefixed tags use HTML rules, namespaced tags (`prefix:name`) use XML rules, and both can be mixed in one document.
+HTML + XML superset markup: unprefixed tags use HTML rules, namespaced tags (`prefix:name`) use XML rules, and both can be mixed in one document. Free for individuals and small teams, paid for companies using it commercially.
 
 ## Install
 
